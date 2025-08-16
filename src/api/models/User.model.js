@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,12 +17,23 @@ const userSchema = new mongoose.Schema(
       enum: ["principiante", "intermedio", "avanzado", "Demeter"],
       required: true,
     },
-    role: { type: String, required: true, trim: true }, //TODO: Admin no puede ser autoaplicable
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user", // El user siempre tiene el rol user por default
+      required: true,
+      trim: true,
+    },
     plants: [{ type: mongoose.Types.ObjectId, ref: "plants" }],
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.pre("save", function (next) {
+  this.password = bcrypt.hashSync(this.password, 10);
+  next();
+});
 
 export const User = mongoose.model("users", userSchema, "users");

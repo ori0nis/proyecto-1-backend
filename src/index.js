@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import express from "express";
-import { connectDB } from "./config/index.js";
+import { connectDB } from "./config/db-connection.js";
 import userRouter from "./api/routes/user.routes.js";
+import { cloudinaryConnection } from "./config/cloudinary-connection.js";
 
 dotenv.config();
 
@@ -10,6 +11,9 @@ const PORT = 3000;
 
 // Conexión a MongoAtlas
 connectDB();
+
+// Conexión a Cloudinary
+cloudinaryConnection();
 
 // Permitimos requests json y genéricas
 app.use(express.json());
