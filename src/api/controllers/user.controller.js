@@ -2,7 +2,7 @@ import { generateToken } from "../../utils/jwt/token.js";
 import { User } from "../models/User.model.js";
 import bcrypt from "bcrypt";
 
-// REGISTER USER
+// REGISTER
 export const registerUser = async (req, res, next) => {
   try {
     const userExists = await User.findOne({ email: req.body.email });
@@ -57,6 +57,41 @@ export const getUsers = async (req, res, next) => {
       message: "Users found",
       users: users,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// UPDATE (con permisos)
+export const updateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const requester = req.user; // Esto vendrá de isAuth
+    const attemptedUpdates = req.body;
+
+    // Cambios permitidos según el rol
+    const userAllowedFields = ["name", "email", "password", "img", "plantCareSkillLevel", "plants"];
+
+    // Si el user es user, no puede cambiarse el rol
+    if (attemptedUpdates.hasOwnProperty("role") && requester.role === "user") {
+      return res.status(403).json("Forbidden: You can't change your own role");
+    }
+
+    // Si el usuario tiene rol "user", solo puede cambiar sus propios campos permitidos
+    if (
+      userAllowedFields.some((field) => attemptedUpdates.hasOwnProperty(field)) &&
+      requester.role === "user" &&
+      requester._id === id
+    ) {
+      const userToUpdate = new User(req.body);
+      userToUpdate._id = id;
+      const updatedUser = User.findByIdAndUpdate(id, userToUpdate, { new: true });
+
+      return res.status(200).json({
+        message: "User updated",
+        user: updatedUser,
+      });
+    }
   } catch (error) {
     next(error);
   }
