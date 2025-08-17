@@ -16,15 +16,3 @@ export const isAuth = async (req, res, next) => {
     next(error);
   }
 };
-
-//TODO: Cambiar esto al controlador correcto
-export const canDeleteAccount = async (req, res, next) => {
-  try {
-    const token = await User.findById(req.user.id).token;
-
-    if (req.user.role !== admin && req.user.token === token) {
-    }
-  } catch (error) {
-    next(error)
-  }
-};
