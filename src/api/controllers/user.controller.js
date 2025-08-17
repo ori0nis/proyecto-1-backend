@@ -50,9 +50,33 @@ export const loginUser = async (req, res, next) => {
 };
 
 // GET
-export const getUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password"); // El admin no puede ver los passwords
+
+    return res.status(200).json({
+      message: "Users found",
+      users: users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserById = async (req, res, next) => {
+  // La validación es tan corta que este request no tiene middleware separado
+  try {
+    const { id } = req.params;
+    const requester = req.user;
+
+    let fieldsToHide = "-password"; // Nadie puede ver los passwords
+
+    if (requester.role === "user") {
+      fieldsToHide += " -role"; // Si el user es user, tampoco puede ver el rol
+    }
+
+    const users = await User.findById(id).select(fieldsToHide);
+
     return res.status(200).json({
       message: "Users found",
       users: users,
@@ -71,27 +95,41 @@ export const updateUser = async (req, res, next) => {
 
     // Cambios permitidos según el rol
     const userAllowedFields = ["name", "email", "password", "img", "plantCareSkillLevel", "plants"];
+    const adminAllowedFields = [...userAllowedFields, "role"];
 
-    // Si el user es user, no puede cambiarse el rol
-    if (attemptedUpdates.hasOwnProperty("role") && requester.role === "user") {
-      return res.status(403).json("Forbidden: You can't change your own role");
-    }
+    // Determinamos qué campos se usan
+    const allowedFields = requester.role === "admin" ? adminAllowedFields : userAllowedFields;
 
-    // Si el usuario tiene rol "user", solo puede cambiar sus propios campos permitidos
-    if (
-      userAllowedFields.some((field) => attemptedUpdates.hasOwnProperty(field)) &&
-      requester.role === "user" &&
-      requester._id === id
-    ) {
-      const userToUpdate = new User(req.body);
-      userToUpdate._id = id;
-      const updatedUser = User.findByIdAndUpdate(id, userToUpdate, { new: true });
+    // Metemos los updates que vamos a pasar por request en un objeto. El [key] es el campo a modificar y el [value] es cada valor metido en el req.body
+    const updates = {};
+    allowedFields.forEach((field) => {
+      if (attemptedUpdates.hasOwnProperty(field)) {
+        updates[field] = attemptedUpdates[field];
+      }
+    });
 
-      return res.status(200).json({
-        message: "User updated",
-        user: updatedUser,
-      });
-    }
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+
+    return res.status(200).json({
+      message: "User updated",
+      user: updatedUser,
+    });
+  } catch (error) {
+    next(error); 
+  }
+};
+
+// DELETE
+export const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const userToDelete = await User.findByIdAndDelete(id);
+    
+    return res.status(200).json({
+      message: "User deleted",
+      user: userToDelete,
+    });
   } catch (error) {
     next(error);
   }
