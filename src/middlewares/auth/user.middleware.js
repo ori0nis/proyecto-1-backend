@@ -6,7 +6,7 @@ export const canViewAllUsers = async (req, res, next) => {
     const requester = req.user;
 
     if (requester.role !== admin) {
-      return res.status(403).json("Forbidden: you need permission to view this resource");
+      return res.status(403).json("Forbidden: You need permission to view this resource");
     }
 
     next();
@@ -29,7 +29,7 @@ export const canUpdateUser = async (req, res, next) => {
     }
 
     if (requester._id.toString() !== id) {
-      return res.status(403).json("Forbidden: You can't modify or delete other users");
+      return res.status(403).json("Forbidden: You can't modify other users");
     }
 
     next();

@@ -34,7 +34,7 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res.status(404).json("User not found");
+      return res.status(401).json("Email or password do not match"); // Mando esto en lugar de un 404 para no dar pistas
     }
 
     if (bcrypt.compareSync(req.body.password, user.password)) {
@@ -43,6 +43,8 @@ export const loginUser = async (req, res, next) => {
         message: "User logged in with token",
         element: [token, user],
       });
+    } else {
+      return res.status(401).json("Email or password do not match");
     }
   } catch (error) {
     next(error);
@@ -115,7 +117,7 @@ export const updateUser = async (req, res, next) => {
       user: updatedUser,
     });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 
@@ -125,7 +127,7 @@ export const deleteUser = async (req, res, next) => {
     const { id } = req.params;
 
     const userToDelete = await User.findByIdAndDelete(id);
-    
+
     return res.status(200).json({
       message: "User deleted",
       user: userToDelete,
