@@ -1,3 +1,4 @@
+import { deleteImageCloudinary } from "../../utils/cloudinary/delete-image.util.js";
 import { generateToken } from "../../utils/jwt/token.js";
 import { User } from "../models/User.model.js";
 import bcrypt from "bcrypt";
@@ -5,9 +6,11 @@ import bcrypt from "bcrypt";
 // REGISTER
 export const registerUser = async (req, res, next) => {
   try {
+    const uploadedImage = req.file.path;
     const userExists = await User.findOne({ email: req.body.email });
 
     if (userExists) {
+      deleteImageCloudinary(uploadedImage);
       return res.status(409).json("User already exists");
     } else {
       const user = new User({
@@ -15,6 +18,8 @@ export const registerUser = async (req, res, next) => {
         img: req.file.path, // Enlazamos la foto subida con el campo de User
         role: "user", // El user que se crea siempre se guarda en la BD con el rol user
       });
+
+      if (req.body.role === "admin") return res.status(403).json("You can't register as an admin");
 
       const userSaved = await user.save();
 
@@ -65,6 +70,7 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
+// GET BY ID
 export const getUserById = async (req, res, next) => {
   // La validación es tan corta que este request no tiene middleware separado
   try {
@@ -112,6 +118,8 @@ export const updateUser = async (req, res, next) => {
 
     const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
 
+    if (!updatedUser) return res.status(404).json("User not found");
+
     return res.status(200).json({
       message: "User updated",
       user: updatedUser,
@@ -125,8 +133,13 @@ export const updateUser = async (req, res, next) => {
 export const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const profilePic = req.user.img;
 
     const userToDelete = await User.findByIdAndDelete(id);
+
+    if (!userToDelete) return res.status(404).json("User not found");
+
+    deleteImageCloudinary(profilePic);
 
     return res.status(200).json({
       message: "User deleted",

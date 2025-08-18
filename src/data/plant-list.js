@@ -21,25 +21,25 @@ export const plants = [
     scientificName: "Aloe vera",
     nickName: "Sábila",
     img: "https://upload.wikimedia.org/wikipedia/commons/c/c0/Aloe_vera_flower.JPG",
-    type: "desertica",
+    type: "desértica",
   },
   {
     scientificName: "Echinocactus grusonii",
     nickName: "Asiento de suegra",
     img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Echinocactus_grusonii_01.jpg",
-    type: "desertica",
+    type: "desértica",
   },
   {
     scientificName: "Nymphaea caerulea",
     nickName: "Loto azul",
     img: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Nymphaea_caerulea1.jpg",
-    type: "acuatica",
+    type: "acuática",
   },
   {
     scientificName: "Victoria amazonica",
     nickName: "Victoria amazónica",
     img: "https://upload.wikimedia.org/wikipedia/commons/1/15/Victoria_amazonica_flower.jpg",
-    type: "acuatica",
+    type: "acuática",
   },
   {
     scientificName: "Acer palmatum",
@@ -93,7 +93,7 @@ export const plants = [
     scientificName: "Opuntia ficus-indica",
     nickName: "Nopal",
     img: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Opuntia_ficus-indica.jpg",
-    type: "desertica",
+    type: "desértica",
   },
   {
     scientificName: "Nepenthes rajah",
@@ -105,13 +105,13 @@ export const plants = [
     scientificName: "Cyperus papyrus",
     nickName: "Papiro",
     img: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Cyperus_papyrus2.jpg",
-    type: "acuatica",
+    type: "acuática",
   },
   {
     scientificName: "Sedum morganianum",
     nickName: "Cola de burro",
     img: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Sedum_morganianum.jpg",
-    type: "desertica",
+    type: "desértica",
   },
   {
     scientificName: "Trifolium repens",
@@ -147,6 +147,6 @@ export const plants = [
     scientificName: "Ferocactus pilosus",
     nickName: "Biznaga de fuego",
     img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Ferocactus_pilosus2.jpg",
-    type: "desertica",
+    type: "desértica",
   },
 ];
