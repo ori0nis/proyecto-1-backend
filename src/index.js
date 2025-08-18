@@ -3,6 +3,8 @@ import express from "express";
 import { connectDB } from "./config/db-connection.js";
 import userRouter from "./api/routes/user.routes.js";
 import { cloudinaryConnection } from "./config/cloudinary-connection.js";
+import { deleteImageCloudinary } from "./utils/cloudinary/delete-image.util.js";
+import { plantRouter } from "./api/routes/plant.routes.js";
 
 dotenv.config();
 
@@ -17,7 +19,7 @@ cloudinaryConnection();
 
 // Permitimos requests json y genéricas
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // Ruta inicial
 const router = express.Router();
@@ -25,6 +27,7 @@ app.use("/", router);
 
 // Todas las rutas
 app.use("/users", userRouter);
+app.use("/plants", plantRouter);
 
 // Ruta para evitar rutas incorrectas
 app.use((req, res, next) => {

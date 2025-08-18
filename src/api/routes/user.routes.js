@@ -9,15 +9,15 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../../middlewares/cloudinary/file-upload.middleware.js";
 import { isAuth } from "../../middlewares/auth/auth.middleware.js";
-import { canDeleteUser, canUpdateUser, canViewAllUsers } from "../../middlewares/auth/user.middleware.js";
+import { canDeleteUser, canUpdateUser, canViewAllUsers, validateUser } from "../../middlewares/auth/user.middleware.js";
 
 const userRouter = express.Router();
 
-userRouter.post("/register", upload.single("img"), registerUser);
+userRouter.post("/register", upload.single("img"), validateUser, registerUser);
 userRouter.post("/login", loginUser);
 userRouter.get("/user/:id", isAuth, getUserById);
-userRouter.get("/userlist", isAuth, canViewAllUsers, getAllUsers);
-userRouter.put("/:id", isAuth, canUpdateUser, updateUser);
-userRouter.delete("/:id", isAuth, canDeleteUser, deleteUser);
+userRouter.get("/user-list", isAuth, canViewAllUsers, getAllUsers);
+userRouter.put("/user/:id", isAuth, canUpdateUser, updateUser);
+userRouter.delete("/user/:id", isAuth, canDeleteUser, deleteUser);
 
 export default userRouter;
