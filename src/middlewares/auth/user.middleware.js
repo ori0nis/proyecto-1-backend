@@ -9,6 +9,12 @@ export const validateUser = async (req, res, next) => {
     const uploadedImage = req.file.path;
     const allowedRoles = User.schema.path("role").enumValues;
     const allowedSkillLevels = User.schema.path("plantCareSkillLevel").enumValues;
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      if (uploadedImage) deleteImageCloudinary(uploadedImage);
+      return res.status(409).json("User already exists");
+    }
 
     if (!name || !email || !password || !plantCareSkillLevel || !role || !plants) {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
@@ -20,7 +26,7 @@ export const validateUser = async (req, res, next) => {
       return res.status(400).json("Your password must contain at least 8 characters");
     }
 
-    if (!allowedRoles.includes(role)) {
+    if (!allowedRoles.includes(role) || req.body.role === "admin") {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
       return res.status(400).json("Please provide a valid role. Valid roles: [user]");
     }

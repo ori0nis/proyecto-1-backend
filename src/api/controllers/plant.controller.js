@@ -2,7 +2,7 @@
 import { deleteImageCloudinary } from "../../utils/cloudinary/delete-image.util.js";
 import { Plant } from "../models/Plant.model.js";
 
-//TODO: Controlador Planta
+//TODO: Manejo del array plants en el user
 
 // GET
 export const getAllPlants = async (req, res, next) => {
@@ -38,25 +38,59 @@ export const getPlantById = async (req, res, next) => {
 // POST
 export const postNewPlant = async (req, res, next) => {
   try {
-    const uploadedImage = req.file.path;
-    const plantExists = await Plant.findOne({ scientificName: req.body.scientificName });
+    const plant = new Plant({
+      ...req.body,
+      img: uploadedImage,
+    });
 
-    if (plantExists) {
-      deleteImageCloudinary(uploadedImage);
-      return res.status(409).json("Plant already exists");
-    } else {
-      const plant = new Plant({
-        ...req.body,
-        img: uploadedImage,
-      });
+    const plantPosted = await plant.save();
 
-      const plantPosted = await plant.save();
+    return res.status(201).json({
+      message: "New plant added",
+      plant: plantPosted,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-      return res.status(201).json({
-        message: "New plant added",
-        plant: plantPosted,
-      });
-    }
+// PUT
+export const editPlant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const plantExists = await Plant.findById(id);
+    const plantToUpdate = req.body;
+
+    if (!plantExists) return res.status(404).json("Plant not found");
+
+    const updatedPlant = await Plant.findByIdAndUpdate(id, plantToUpdate, { new: true });
+
+    return res.status(200).json({
+      message: "Plant updated",
+      plant: updatedPlant,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE
+export const deletePlant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const plantToDelete = await Plant.findByIdAndDelete(id);
+
+    if (!plantToDelete) return res.status(404).json("Plant doesn't exist");
+
+    const plantImg = plantToDelete.img;
+
+    deleteImageCloudinary(plantImg);
+
+    return res.status(200).json({
+      message: "Plant deleted",
+      plant: plantToDelete,
+    });
   } catch (error) {
     next(error);
   }
