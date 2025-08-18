@@ -71,21 +71,26 @@ export const canUpdateUser = async (req, res, next) => {
       return res.status(400).json("Role doesn't exist");
     }
 
-    // Y si el admin está intentando autodegradarse (pero sí que puede degradar a otro)
-    if (requester._id.toString() === id && attemptedRoleUpdate === "user") {
-      return res.status(403).json("Forbidden: Admins cannot self-demote");
+    // ADMIN LOGIC
+    if (requester.role === "admin") {
+      if (requester._id.toString() === id && attemptedRoleUpdate) {
+        return res.status(403).json("Forbidden: Admins cannot self-demote");
+      }
+
+      return next(); // Admins pueden modificar cualquier otra cosa
     }
 
-    // Permitimos las demás acciones
-    if (requester.role === "admin") return next();
+    // USER LOGIC
+    if (requester.role === "user") {
+      if (requester._id.toString() !== id) {
+        return res.status(403).json("Forbidden: You can't modify other users");
+      }
 
-    // Restringimos al user
-    if (attemptedRoleUpdate && requester._id.toString() === id) {
-      return res.status(403).json("Forbidden: You can't modify your role");
-    }
+      if (attemptedRoleUpdate) {
+        return res.status(403).json("Forbidden: You can't modify your role");
+      }
 
-    if (requester._id.toString() !== id) {
-      return res.status(403).json("Forbidden: You can't modify other users");
+      return next(); // Lo demás está permitido
     }
 
     next();
