@@ -1,33 +1,23 @@
-import { deleteImageCloudinary } from "../../utils/cloudinary/delete-image.util.js";
 import { generateToken } from "../../utils/jwt/token.js";
-import { User } from "../models/User.model.js";
 import bcrypt from "bcrypt";
+import { User } from "../models/User.model.js";
+import { deleteImageCloudinary } from "../../utils/cloudinary/delete-image.util.js";
 
 // REGISTER
 export const registerUser = async (req, res, next) => {
   try {
-    const uploadedImage = req.file.path;
-    const userExists = await User.findOne({ email: req.body.email });
+    const user = new User({
+      ...req.body,
+      img: req.file.path, // Enlazamos la foto subida con el campo de User
+      role: "user", // El user que se crea siempre se guarda en la BD con el rol user
+    });
 
-    if (userExists) {
-      deleteImageCloudinary(uploadedImage);
-      return res.status(409).json("User already exists");
-    } else {
-      const user = new User({
-        ...req.body,
-        img: req.file.path, // Enlazamos la foto subida con el campo de User
-        role: "user", // El user que se crea siempre se guarda en la BD con el rol user
-      });
+    const userSaved = await user.save();
 
-      if (req.body.role === "admin") return res.status(403).json("You can't register as an admin");
-
-      const userSaved = await user.save();
-
-      return res.status(201).json({
-        message: "User created",
-        user: userSaved,
-      });
-    }
+    return res.status(201).json({
+      message: "User created",
+      user: userSaved,
+    });
   } catch (error) {
     next(error);
   }

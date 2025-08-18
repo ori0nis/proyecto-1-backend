@@ -8,6 +8,12 @@ export const validatePlant = async (req, res, next) => {
     const { scientificName, nickName, type } = req.body;
     const uploadedImage = req.file.path;
     const allowedPlantTypes = Plant.schema.path("type").enumValues;
+    const plantExists = await Plant.findOne({ scientificName });
+
+    if (plantExists) {
+      if (uploadedImage) deleteImageCloudinary(uploadedImage);
+      return res.status(409).json("Plant already exists");
+    }
 
     if (!scientificName || !nickName || !type) {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
@@ -15,9 +21,21 @@ export const validatePlant = async (req, res, next) => {
     }
 
     if (!allowedPlantTypes.includes(type)) {
-      deleteImageCloudinary(uploadedImage);
+      if (uploadedImage) deleteImageCloudinary(uploadedImage);
       return res.status(400).json("Allowed plant types: tropical, desertica, acuatica, templada, alpina");
     }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const canDeletePlant = async (req, res, next) => {
+  try {
+    const requester = req.user;
+
+    if (requester.role !== "admin") return res.status(403).json("Forbidden: You can't delete a plant");
 
     next();
   } catch (error) {
