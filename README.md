@@ -45,7 +45,7 @@ cp .env.example .env
 ## 👔 Plant Management
 - Create new plant entries with images
 - View all plants or filter by id
-- Update new plants
+- Update existing plants
 - Plant image upload and storage
 
 ## 📱 Social Features
@@ -55,7 +55,7 @@ cp .env.example .env
 ## 🔐 Authentication System
 ### Registration
 - Users register with name, email and password
-- Passwords are hashed using bcrypt before storage
+- Passwords are hashed using ``bcrypt`` before storage
 
 ### Login
 - Users provide name, email and password
