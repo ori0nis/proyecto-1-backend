@@ -6,17 +6,25 @@ import { deleteImageCloudinary } from "../../utils/cloudinary/delete-image.util.
 // REGISTER
 export const registerUser = async (req, res, next) => {
   try {
+    const userPlants = req.body.plants;
+    // Creamos un Set con las plantas para que el register tampoco permita valores duplicados
+    const plantsArray = Array.isArray(userPlants) ? userPlants : [userPlants];
+    const plantsWithNoDuplicates = [...new Set(plantsArray)];
+
     const user = new User({
       ...req.body,
       img: req.file.path, // Enlazamos la foto subida con el campo de User
       role: "user", // El user que se crea siempre se guarda en la BD con el rol user
+      plants: plantsWithNoDuplicates // Metemos el Set
     });
 
     const userSaved = await user.save();
 
+    const userWithPlants = await User.findById(userSaved._id).populate("plants");
+
     return res.status(201).json({
       message: "User created",
-      user: userSaved,
+      user: userWithPlants,
     });
   } catch (error) {
     next(error);
@@ -26,7 +34,7 @@ export const registerUser = async (req, res, next) => {
 // LOGIN
 export const loginUser = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email }).populate("plants");
 
     if (!user) {
       return res.status(401).json("Email or password do not match"); // Mando esto en lugar de un 404 para no dar pistas
@@ -49,7 +57,7 @@ export const loginUser = async (req, res, next) => {
 // GET
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select("-password"); // El admin no puede ver los passwords
+    const users = await User.find().select("-password").populate("plants"); // El admin no puede ver los passwords
 
     return res.status(200).json({
       message: "Users found",
@@ -73,7 +81,7 @@ export const getUserById = async (req, res, next) => {
       fieldsToHide += " -role"; // Si el user es user, tampoco puede ver el rol
     }
 
-    const users = await User.findById(id).select(fieldsToHide);
+    const users = await User.findById(id).select(fieldsToHide).populate("plants");
 
     return res.status(200).json({
       message: "Users found",
@@ -88,25 +96,21 @@ export const getUserById = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const requester = req.user; // Esto vendrá de isAuth
-    const attemptedUpdates = req.body;
+    const attemptedUpdates = { ...req.body };
 
-    // Cambios permitidos según el rol
-    const userAllowedFields = ["name", "email", "password", "img", "plantCareSkillLevel", "plants"];
-    const adminAllowedFields = [...userAllowedFields, "role"];
+    const updates = { ...attemptedUpdates };
 
-    // Determinamos qué campos se usan
-    const allowedFields = requester.role === "admin" ? adminAllowedFields : userAllowedFields;
+    // Si el user quiere actualizar plants, verificamos si mete varias y si no, convertimos su insert en array para que funcione $addToSet
+    if (attemptedUpdates.plants) {
+      const plantsArray = Array.isArray(attemptedUpdates.plants) ? attemptedUpdates.plants : [attemptedUpdates.plants];
 
-    // Metemos los updates que vamos a pasar por request en un objeto. El [key] es el campo a modificar y el [value] es cada valor metido en el req.body
-    const updates = {};
-    allowedFields.forEach((field) => {
-      if (attemptedUpdates.hasOwnProperty(field)) {
-        updates[field] = attemptedUpdates[field];
-      }
-    });
+      updates["$addToSet"] = { plants: { $each: plantsArray } };
 
-    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+      // Después de haber refinado el campo plants del update, borramos el objeto original del request para que no haya conflictos
+      delete updates.plants;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true }).populate("plants");
 
     if (!updatedUser) return res.status(404).json("User not found");
 

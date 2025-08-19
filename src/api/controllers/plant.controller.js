@@ -2,8 +2,6 @@
 import { deleteImageCloudinary } from "../../utils/cloudinary/delete-image.util.js";
 import { Plant } from "../models/Plant.model.js";
 
-//TODO: Manejo del array plants en el user
-
 // GET
 export const getAllPlants = async (req, res, next) => {
   try {
@@ -38,6 +36,8 @@ export const getPlantById = async (req, res, next) => {
 // POST
 export const postNewPlant = async (req, res, next) => {
   try {
+    const uploadedImage = req.file.path;
+    
     const plant = new Plant({
       ...req.body,
       img: uploadedImage,
