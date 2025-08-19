@@ -105,7 +105,7 @@ In version 1.0.0, all input validation depends on native ``mongoose`` schema con
 ## 📄 License
 This project is open source and available under the ``MIT License``.
 
-🤝 Contributing
+## 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Contact me for more info, and stay up to date with the issues page.
 
 
