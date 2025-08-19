@@ -38,9 +38,9 @@ cp .env.example .env
 ## 📋 API Features
 - User management
 - User registration and profile creation
-- User login with JWT authentication
+- User login with ``JWT`` authentication
 - User profile viewing and editing
-- Secure password storage with bcrypt hashing
+- Secure password storage with ``bcrypt`` hashing
 
 ## 👔 Plant Management
 - Create new plant entries with images
