@@ -85,7 +85,7 @@ In version 1.0.0, all input validation depends on native ``mongoose`` schema con
 
 ### User routes
 - ``GET /users/user-list`` - Get all users (only for admin, minus password field)
-- ``GET /users/user/:id`` - Get user profile by id, minus password field for admin, minus password and role fields for user)
+- ``GET /users/user/:id`` - Get user profile by id, minus password field for admin, minus password and role fields for user
 - ``PUT /users/user/:id`` - Update user profile, with validations
 - ``DELETE /users/user/:id`` - Delete own account for user, any account for admin
 
