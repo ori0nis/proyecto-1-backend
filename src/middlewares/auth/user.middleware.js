@@ -79,7 +79,7 @@ export const canUpdateUser = async (req, res, next) => {
 
     // ADMIN LOGIC
     if (requester.role === "admin") {
-      if (requester._id.toString() === id && attemptedRoleUpdate) {
+      if (requester._id.toString() === id && attemptedRoleUpdate === "user") {
         return res.status(403).json("Forbidden: Admins cannot self-demote");
       }
 
