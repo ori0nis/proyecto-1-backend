@@ -2,7 +2,7 @@
 I'm making my backend career sprout by creating this cute API where you can collect your plants, post new ones, and find other plant-loving users.
 
 ## 🌿 About the Project
-myplants.io is a RESTful API built with Node.js and Express that allows plant enthusiasts to manage their plant collections, see other users, and share their botanical treasures. This API provides full CRUD functionality for plants and users with secure authentication and authorization.
+myplants.io is a RESTful API built with ``Node.js`` and ``Express`` that allows plant enthusiasts to manage their plant collections, see other users, and share their botanical treasures. This API provides full CRUD functionality for plants and users with secure authentication and authorization.
 
 ## 🛠️ Tech Stack & Libraries
 - Runtime: ``Node.js`` with ``nodemon`` to expedite development
