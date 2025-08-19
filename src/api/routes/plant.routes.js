@@ -6,7 +6,6 @@ import { canDeletePlant, validatePlant } from "../../middlewares/auth/plant.midd
 
 export const plantRouter = express.Router();
 
-//TODO: Dejar guay la lista de users con plantas diferentes asociadas
 plantRouter.get("/plantlist", isAuth, getAllPlants);
 plantRouter.get("/plant/:id", isAuth, getPlantById);
 plantRouter.post("/post-new-plant", isAuth, upload.single("img"), validatePlant, postNewPlant);
