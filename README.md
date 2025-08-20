@@ -81,7 +81,7 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 ## 🔑 Authorization
-- Users can only edit/delete their own plants
+- Users can edit plants, but only admin can delete them
 - Profile modifications require ownership validation
 - Admin privileges are implemented for special actions
 
