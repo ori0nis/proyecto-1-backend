@@ -6,7 +6,7 @@ import { canDeletePlant, validatePlant } from "../../middlewares/auth/plant.midd
 
 export const plantRouter = express.Router();
 
-plantRouter.get("/plant-list", isAuth, getAllPlants);
+plantRouter.get("/plant-list", getAllPlants); // Único endpoint expuesto públicamente
 plantRouter.get("/plant/:id", isAuth, getPlantById);
 plantRouter.post("/post-new-plant", isAuth, upload.single("img"), validatePlant, postNewPlant);
 plantRouter.put("/plant/:id", isAuth, editPlant);
