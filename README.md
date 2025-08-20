@@ -57,13 +57,15 @@ cp .env.example .env
 - Here's an example of required fields to complete a register, which has to be sent as a multipart form:
 
 ```json
-"name": "John",
-"email": "john@email.com",
-"password": "ExamplePassword101",
-"img": "profile-pic.png", ---> locally uploaded by the user,
-"plantCareSkillLevel": "intermedio", ---> enforced by an enum in the User schema,
-"role": "user", ---> only user is allowed,
-"plants": ["68a3a286aa3e0b8b2f909eac", "68a3a286aa3e0b8b2f909eb6"] ---> plant id's can be found in the public plant list. User must send each as a "plants" field in the multipart form
+{
+	"name": "John",
+	"email": "john@email.com",
+	"password": "ExamplePassword101",
+	"img": "profile-pic.png", ---> locally uploaded by the user,
+	"plantCareSkillLevel": "intermedio", ---> enforced by an enum in the User schema,
+	"role": "user", ---> only user is allowed,
+	"plants": ["68a3a286aa3e0b8b2f909eac", "68a3a286aa3e0b8b2f909eb6"] ---> plant id's can be found in the public plant list. User must send each as a "plants" field in the 	multipart form
+}
 ```
 
 - Password is then hashed using ``bcrypt`` before storage
@@ -111,10 +113,12 @@ In version 1.0.0, all input validation depends on native ``mongoose`` schema con
 To post a plant, user must fulfill the required fields:
 
 ```json
-"scientificName": "Crassula ovata",
-"nickName": "Árbol de jade",
-"img": "crassula-ovata.png", ---> locally uploaded by the user
-"type": "tropical" ---> enforced by an enum in the Plant schema
+{
+	"scientificName": "Crassula ovata",
+	"nickName": "Árbol de jade",
+	"img": "crassula-ovata.png", ---> locally uploaded by the user
+	"type": "tropical" ---> enforced by an enum in the Plant schema
+}
 ```
 
 ## 📢 Responses
