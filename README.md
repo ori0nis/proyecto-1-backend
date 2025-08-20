@@ -102,7 +102,7 @@ In version 1.0.0, all input validation depends on native ``mongoose`` schema con
 
 ### Plant routes
 - ``GET /plants/plant-list`` - Get all plants (this is the only internal endpoint that is fully public)
-- ``GET /plants/plant/:id`` - Get plant by id
+- ``GET /plants/plant/:id`` - Get plant by id (this endpoint is kept behind authentication requirement to encourage user registration)
 - ``POST /plants/post-new-plant`` - Post new plant
 - ``PUT /plants/plant/:id`` - Update a plant
 - ``DELETE /plants/plant/:id`` - Delete plant, only available for admin
