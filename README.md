@@ -54,8 +54,19 @@ cp .env.example .env
 
 ## 🔐 Authentication System
 ### Registration
-- Users register with name, email and password
-- Passwords are hashed using ``bcrypt`` before storage
+- Here's an example of required fields to complete a register, which has to be sent as a multipart form:
+
+```json
+"name": "John",
+"email": "john@email.com",
+"password": "ExamplePassword101",
+"img": "profile-pic.png", ---> locally uploaded by the user,
+"plantCareSkillLevel": "intermediate", ---> enforced by an enum in the User schema,
+"role": "user", ---> only user is allowed,
+"plants": ["68a3a286aa3e0b8b2f909eac", "68a3a286aa3e0b8b2f909eb6"] ---> plant id's can be found in the public plant list. User must send each as a "plants" field in the multipart form
+```
+
+- Password is then hashed using ``bcrypt`` before storage
 
 ### Login
 - Users provide name, email and password
@@ -63,7 +74,7 @@ cp .env.example .env
 - User gets a ``JWT`` token for authentication
 
 ## 🚫 Protected routes
-All internal endpoints require authentication via ``JWT`` token sent in the Authorization header:
+All internal endpoints except ``GET /plants/plant-list`` require authentication via ``JWT`` token sent in the Authorization header:
 
 ```bash
 Authorization: Bearer <your_jwt_token>
@@ -90,11 +101,55 @@ In version 1.0.0, all input validation depends on native ``mongoose`` schema con
 - ``DELETE /users/user/:id`` - Delete own account for user, any account for admin
 
 ### Plant routes
-- ``GET /plants/plant-list`` - Get all plants
+- ``GET /plants/plant-list`` - Get all plants (this is the only internal endpoint that is fully public)
 - ``GET /plants/plant/:id`` - Get plant by id
 - ``POST /plants/post-new-plant`` - Post new plant
 - ``PUT /plants/plant/:id`` - Update a plant
 - ``DELETE /plants/plant/:id`` - Delete plant, only available for admin
+
+### 🌱 Posting (potting?) a plant
+To post a plant, user must fulfill the required fields:
+
+```json
+"scientificName": "Crassula ovata",
+"nickName": "Árbol de jade",
+"img": "crassula-ovata.png", ---> locally uploaded by the user
+"type": "tropical" ---> enforced by an enum in the Plant schema
+```
+
+## 📢 Responses
+### User
+- Here's an example of a response provided by ``GET /users/user/:id``. The field "plants" gets populated with the corresponding plants owned by the user:
+
+```json
+{
+	"message": "User created",
+	"user": {
+		"_id": "68a584f77b48a970c0d67404",
+		"name": "John",
+		"email": "john@email.com",
+		"password": "$2b$10$Iu1gtrAtWoYProxIgkKiAO9py9jl9Yz8YPmPe7faYYWDw982EePlu",
+		"img": "https://res.cloudinary.com/dxanwvegw/image/upload/v1755677929/myplants.io/s2mpclzlekfgbigtofuf.png",
+		"plantCareSkillLevel": "intermedio",
+		"role": "user",
+		"plants": [
+			{
+				"_id": "68a3a286aa3e0b8b2f909eb6",
+				"scientificName": "Edelweiss leontopodium alpinum",
+				"nickName": "Edelweiss",
+				"img": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Leontopodium_alpinum_%28Edelweiss%29.jpg",
+				"type": "alpina",
+				"__v": 0,
+				"createdAt": "2025-08-18T22:00:38.065Z",
+				"updatedAt": "2025-08-18T22:00:38.065Z"
+			}
+		],
+		"createdAt": "2025-08-20T08:19:03.109Z",
+		"updatedAt": "2025-08-20T08:19:03.109Z",
+		"__v": 0
+	}
+}
+```
 
 ## 🌟 Future Enhancements
 - Plant categorization and tagging system (with a more-info approach)
