@@ -81,11 +81,11 @@ export const getUserById = async (req, res, next) => {
       fieldsToHide += " -role"; // Si el user es user, tampoco puede ver el rol
     }
 
-    const users = await User.findById(id).select(fieldsToHide).populate("plants");
+    const user = await User.findById(id).select(fieldsToHide).populate("plants");
 
     return res.status(200).json({
-      message: "Users found",
-      users: users,
+      message: "User found",
+      users: user,
     });
   } catch (error) {
     next(error);
