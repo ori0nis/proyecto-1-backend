@@ -61,9 +61,9 @@ cp .env.example .env
 	"name": "John",
 	"email": "john@email.com",
 	"password": "ExamplePassword101",
-	"img": "profile-pic.png", ---> locally uploaded by the user,
-	"plantCareSkillLevel": "intermedio", ---> enforced by an enum in the User schema,
-	"role": "user", ---> only user is allowed,
+	"img": "profile-pic.png", ---> locally uploaded by the user
+	"plantCareSkillLevel": "intermedio", ---> enforced by an enum in the User schema
+	"role": "user", ---> only user is allowed
 	"plants": ["68a3a286aa3e0b8b2f909eac", "68a3a286aa3e0b8b2f909eb6"] ---> plant id's can be found in the public plant list. User must send each as a "plants" field in the 	multipart form
 }
 ```
