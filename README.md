@@ -123,7 +123,7 @@ To post a plant, user must fulfill the required fields:
 
 ```json
 {
-	"message": "User created",
+	"message": "User found",
 	"user": {
 		"_id": "68a584f77b48a970c0d67404",
 		"name": "John",

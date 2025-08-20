@@ -83,6 +83,7 @@ export const getUserById = async (req, res, next) => {
 
     const user = await User.findById(id).select(fieldsToHide).populate("plants");
 
+    // 
     return res.status(200).json({
       message: "User found",
       users: user,
