@@ -13,27 +13,42 @@ export const validateUser = async (req, res, next) => {
 
     if (userExists) {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
-      return res.status(409).json("User already exists");
+      return res.status(409).json({
+        message: "User already exists",
+        status: 409,
+      });
     }
 
     if (!name || !email || !password || !plantCareSkillLevel || !role || !plants) {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
-      return res.status(400).json("Please provide all the required fields");
+      return res.status(400).json({
+        message: "Please provide all the required fields",
+        status: 400,
+      });
     }
 
     if (password.length < 8) {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
-      return res.status(400).json("Your password must contain at least 8 characters");
+      return res.status(400).json({
+        message: "Your password must contain at least 8 characters",
+        status: 400,
+      });
     }
 
     if (!allowedRoles.includes(role) || req.body.role === "admin") {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
-      return res.status(400).json("Please provide a valid role. Valid roles: [user]");
+      return res.status(400).json({
+        message: "Please provide a valid role. Valid roles: [user]",
+        status: 400,
+      });
     }
 
     if (!allowedSkillLevels.includes(plantCareSkillLevel)) {
       if (uploadedImage) deleteImageCloudinary(uploadedImage);
-      return res.status(400).json("Available skill levels: principiante, intermedio, avanzado");
+      return res.status(400).json({
+        message: "Available skill levels: principiante, intermedio, avanzado",
+        status: 400,
+      });
     }
 
     next();
@@ -48,7 +63,10 @@ export const canViewAllUsers = async (req, res, next) => {
     const requester = req.user;
 
     if (requester.role !== "admin") {
-      return res.status(403).json("Forbidden: You need permission to view this resource");
+      return res.status(403).json({
+        message: "Forbidden: You need permission to view this resource",
+        status: 403,
+      });
     }
 
     next();
@@ -69,18 +87,27 @@ export const canUpdateUser = async (req, res, next) => {
 
     // Reforzamos los campos admitidos para el skill level. No meto "Demeter" porque es un easter egg
     if (attemptedPlantSkillUpdate && !allowedSkillLevels.includes(attemptedPlantSkillUpdate)) {
-      return res.status(400).json("Available skill levels: principiante, intermedio, avanzado");
+      return res.status(400).json({
+        message: "Available skill levels: principiante, intermedio, avanzado",
+        status: 400,
+      });
     }
 
     // Primero validamos si el rol introducido existe
     if (attemptedRoleUpdate && !allowedRoles.includes(attemptedRoleUpdate)) {
-      return res.status(400).json("Role doesn't exist");
+      return res.status(400).json({
+        message: "Role doesn't exist",
+        status: 400,
+      });
     }
 
     // ADMIN LOGIC
     if (requester.role === "admin") {
       if (requester._id.toString() === id && attemptedRoleUpdate === "user") {
-        return res.status(403).json("Forbidden: Admins cannot self-demote");
+        return res.status(403).json({
+          message: "Forbidden: Admins cannot self-demote",
+          status: 403,
+        });
       }
 
       return next(); // Admins pueden modificar cualquier otra cosa
@@ -89,11 +116,17 @@ export const canUpdateUser = async (req, res, next) => {
     // USER LOGIC
     if (requester.role === "user") {
       if (requester._id.toString() !== id) {
-        return res.status(403).json("Forbidden: You can't modify other users");
+        return res.status(403).json({
+          message: "Forbidden: You can't modify other users",
+          status: 403,
+        });
       }
 
       if (attemptedRoleUpdate) {
-        return res.status(403).json("Forbidden: You can't modify your role");
+        return res.status(403).json({
+          message: "Forbidden: You can't modify your role",
+          status: 403,
+        });
       }
 
       return next(); // Lo demás está permitido
@@ -115,7 +148,10 @@ export const canDeleteUser = async (req, res, next) => {
       return next();
     }
 
-    return res.status(403).json("Forbidden: You can't delete other users");
+    return res.status(403).json({
+      message: "Forbidden: You can't delete other users",
+      status: 403,
+    });
   } catch (error) {
     next(error);
   }

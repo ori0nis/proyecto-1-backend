@@ -22,7 +22,11 @@ export const getPlantById = async (req, res, next) => {
     const { id } = req.params;
     const plant = await Plant.findById(id);
 
-    if (!plant) return res.status(404).json("Plant not found");
+    if (!plant)
+      return res.status(404).json({
+        message: "Plant not found",
+        status: 404,
+      });
 
     return res.status(200).json({
       message: "Plant found",
@@ -37,7 +41,7 @@ export const getPlantById = async (req, res, next) => {
 export const postNewPlant = async (req, res, next) => {
   try {
     const uploadedImage = req.file.path;
-    
+
     const plant = new Plant({
       ...req.body,
       img: uploadedImage,
@@ -61,7 +65,11 @@ export const editPlant = async (req, res, next) => {
     const plantExists = await Plant.findById(id);
     const plantToUpdate = req.body;
 
-    if (!plantExists) return res.status(404).json("Plant not found");
+    if (!plantExists)
+      return res.status(404).json({
+        message: "Plant not found",
+        status: 404,
+      });
 
     const updatedPlant = await Plant.findByIdAndUpdate(id, plantToUpdate, { new: true });
 
@@ -81,7 +89,11 @@ export const deletePlant = async (req, res, next) => {
 
     const plantToDelete = await Plant.findByIdAndDelete(id);
 
-    if (!plantToDelete) return res.status(404).json("Plant doesn't exist");
+    if (!plantToDelete)
+      return res.status(404).json({
+        message: "Plant doesn't exist",
+        status: 404,
+      });
 
     const plantImg = plantToDelete.img;
 
