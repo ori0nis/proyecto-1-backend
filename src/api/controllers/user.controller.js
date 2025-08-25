@@ -15,7 +15,7 @@ export const registerUser = async (req, res, next) => {
       ...req.body,
       img: req.file.path, // Enlazamos la foto subida con el campo de User
       role: "user", // El user que se crea siempre se guarda en la BD con el rol user
-      plants: plantsWithNoDuplicates // Metemos el Set
+      plants: plantsWithNoDuplicates, // Metemos el Set
     });
 
     const userSaved = await user.save();
@@ -37,7 +37,10 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email }).populate("plants");
 
     if (!user) {
-      return res.status(401).json("Email or password do not match"); // Mando esto en lugar de un 404 para no dar pistas
+      return res.status(401).json({
+        message: "Email or password do not match",
+        statu: 401,
+      }); // Mando esto en lugar de un 404 para no dar pistas
     }
 
     if (bcrypt.compareSync(req.body.password, user.password)) {
@@ -47,7 +50,10 @@ export const loginUser = async (req, res, next) => {
         element: [token, user],
       });
     } else {
-      return res.status(401).json("Email or password do not match");
+      return res.status(401).json({
+        message: "Email or password do not match",
+        status: 401,
+      });
     }
   } catch (error) {
     next(error);
@@ -112,7 +118,11 @@ export const updateUser = async (req, res, next) => {
 
     const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true }).populate("plants");
 
-    if (!updatedUser) return res.status(404).json("User not found");
+    if (!updatedUser)
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
 
     return res.status(200).json({
       message: "User updated",
@@ -131,7 +141,11 @@ export const deleteUser = async (req, res, next) => {
 
     const userToDelete = await User.findByIdAndDelete(id);
 
-    if (!userToDelete) return res.status(404).json("User not found");
+    if (!userToDelete)
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
 
     deleteImageCloudinary(profilePic);
 
