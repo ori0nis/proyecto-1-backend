@@ -1,4 +1,4 @@
-## 🌱 Welcome to myplants.io, a fun plant-themed REST API!
+# 🌱 Welcome to myplants.io, a fun plant-themed REST API!
 I'm making my backend career sprout by creating this cute API where you can collect your plants, post new ones, and find other plant-loving users.
 
 ## 🌿 About the Project
