@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    plants: [{ type: mongoose.Types.ObjectId, ref: "plants" }],
+    plants: [{ type: mongoose.Types.ObjectId, ref: "plants", required: true }],
   },
   {
     timestamps: true,
