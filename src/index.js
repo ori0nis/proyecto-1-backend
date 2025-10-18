@@ -3,7 +3,6 @@ import express from "express";
 import { connectDB } from "./config/db-connection.js";
 import userRouter from "./api/routes/user.routes.js";
 import { cloudinaryConnection } from "./config/cloudinary-connection.js";
-import { deleteImageCloudinary } from "./utils/cloudinary/delete-image.util.js";
 import { plantRouter } from "./api/routes/plant.routes.js";
 
 dotenv.config();

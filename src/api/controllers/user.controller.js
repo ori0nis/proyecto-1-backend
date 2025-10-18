@@ -39,7 +39,7 @@ export const loginUser = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         message: "Email or password do not match",
-        statu: 401,
+        status: 401,
       }); // Mando esto en lugar de un 404 para no dar pistas
     }
 
